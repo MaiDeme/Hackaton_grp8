@@ -10,6 +10,3 @@ RUN apt-get update && apt-get install --fix-missing wget -y  \
 
 #ENV PATH=$PATH:/usr/local/sratoolkit.3.1.1-ubuntu64/bin
 ENV PATH="/usr/local/sratoolkit.3.1.1-ubuntu64/bin:${PATH}"
-
-CMD [ "/bin/bash" ]
-
