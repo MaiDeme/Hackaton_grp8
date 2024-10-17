@@ -8,7 +8,7 @@ samples = [
 ]
 rule all:  # by convention this is the expected final output
     input:
-        expand("data/{sample}.fastq", sample=samples),
+        expand("data/{sample}.fastqc", sample=samples),
 
 
 rule create_dir:
@@ -22,13 +22,11 @@ rule create_dir:
         done
         """
 
-rule download_fasta:
+rule trimming:
     output:
         "{sample}.fastq",
     container:
-        "docker://maidem/fasterq-dump"
+        "docker://maxime/trimming"
     shell:
         """ 
-        cd data/ &&       
-        /usr/local/sratoolkit.3.1.1-ubuntu64/bin/fasterq-dump --threads 16 {wildcards.sample} -O data
-        """
+        cd data/ &&       """
