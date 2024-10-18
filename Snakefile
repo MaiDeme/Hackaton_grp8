@@ -8,27 +8,19 @@ samples = [
 ]
 rule all:  # by convention this is the expected final output
     input:
-        expand("data/{sample}.fastq", sample=samples),
+        expand("data/{sample}.fastq.gz", sample=samples),
 
-
-rule create_dir:
-    output:
-        directory("data"),
-        directory("results"),
-    shell:
-        """
-        for dir in {outputs}; do
-            mkdir -p $dir
-        done
-        """
 
 rule download_fasta:
     output:
-        "{sample}.fastq",
+        "data/{sample}.fastq.gz", #compressed file
     container:
         "docker://maidem/fasterq-dump"
     shell:
-        """ 
-        cd data/ &&       
-        /usr/local/sratoolkit.3.1.1-ubuntu64/bin/fasterq-dump --threads 16 {wildcards.sample} -O data
         """
+        /usr/local/sratoolkit.3.1.1-ubuntu64/bin/prefetch --progress {wildcards.sample}  -O data/
+        /usr/local/sratoolkit.3.1.1-ubuntu64/bin/fasterq-dump --progress --threads 16 {wildcards.sample} -O data/
+        gzip data/{wildcards.sample}.fastq
+        rm -r data/{wildcards.sample}
+        """
+
