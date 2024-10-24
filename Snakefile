@@ -1,32 +1,34 @@
-samples = [
-    "SRR10379721",
-    "SRR10379722",
-    "SRR10379723",
-    "SRR10379724",
-    "SRR10379725",
-    "SRR10379726",
-]
-rule all:  # by convention this is the expected final output
+# Définir les fichiers d'entrée
+input_dir = "fastq-exemple/"
+R1_file = f"{input_dir}R1.fastq"
+R2_file = f"{input_dir}R2.fastq"
+
+rule all:
     input:
-        expand("data/{sample}.fastqc", sample=samples),
+        "trimm/R1_trimmed.fastq",
+        "trimm/R2_trimmed.fastq"
 
-
-rule create_dir:
+rule trim:
+    input:
+        R1=R1_file,
+        R2=R2_file
     output:
-        directory("data"),
-        directory("results"),
+        R1_trimmed="trimm/R1_trimmed.fastq",
+        R2_trimmed="trimm/R2_trimmed.fastq"
+    threads: 4  # Nombre de threads à utiliser
+    singularity:
+        "cutadapt.sif" 
     shell:
         """
-        for dir in {outputs}; do
-            mkdir -p $dir
-        done
+        
+        cutadapt -a AGATCGGAAGAGC -o {output.R1_trimmed} {input.R1}
+        cutadapt -a AGATCGGAAGAGC -o {output.R2_trimmed} {input.R2}
         """
 
-rule trimming:
+# Règle pour créer le dossier de sortie s'il n'existe pas
+rule create_output_dir:
     output:
-        "{sample}.fastq",
-    container:
-        "docker://maxime/trimming"
-    shell:
-        """ 
-        cd data/ &&       """
+        directory("trimm/")
+    run:
+        import os
+        os.makedirs("trimm/", exist_ok=True)
