@@ -1,0 +1,2 @@
+Conteneur feature Counts fonctionne 
+PArcontre obligé de préciser le path dans sudo

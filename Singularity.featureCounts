@@ -1,0 +1,15 @@
+Bootstrap: docker
+From: alpine:3.14
+
+%post
+apk add --no-cache wget tar make
+wget -O /opt/subread-1.4.6-p3.tar.gz \
+https://sourceforge.net/projects/subread/files/subread-1.4.6-p3/subread-1.4.6-p3-Linux-x86_64.tar.gz
+tar -xvzf /opt/subread-1.4.6-p3.tar.gz -C /opt/
+chmod -R 755 /opt/subread-1.4.6-p3-Linux-x86_64
+
+%environment
+export PATH=/opt/subread-1.4.6-p3-Linux-x86_64/bin:$PATH
+
+%runscript
+exec featureCounts "@"
