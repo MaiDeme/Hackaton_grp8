@@ -18,6 +18,9 @@ rule trim:
         "data/{sample}.fastq.gz"
     output:
         "trimm/{sample}_trimmed.fastq.gz"
+    #use cutadapt image 
+    singularity:
+        "cutadapt.sif" 
     shell:
         """
         cutadapt -a AGATCGGAAGAGC -o {output} {input}
