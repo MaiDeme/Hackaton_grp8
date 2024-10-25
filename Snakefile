@@ -8,19 +8,31 @@ samples = [
 ]
 rule all:  # by convention this is the expected final output
     input:
-        expand("data/{sample}.fastq.gz", sample=samples),
+        expand("data/{sample}_fastqc.html", sample=samples),
 
 
-rule download_fasta:
+#rule download_fasta:
+#    output:
+#        "data/{sample}.fastq.gz", #compressed file
+#    container:
+#        "docker://maidem/fasterq-dump"
+#    shell:
+#        """
+#        prefetch --progress {wildcards.sample}  -O data/
+#        fasterq-dump --progress --threads 16 {wildcards.sample} -O data/
+#        gzip data/{wildcards.sample}.fastq
+#        rm -r data/{wildcards.sample}
+#        """
+
+rule fastqc:
+    input:
+        "data/{sample}.fastq.gz"
     output:
-        "data/{sample}.fastq.gz", #compressed file
+        html="data/{sample}_fastqc.html",
+        zip="data/{sample}_fastqc.zip"
     container:
-        "docker://maidem/fasterq-dump"
+        "docker://maidem/fastqc"
     shell:
         """
-        /usr/local/sratoolkit.3.1.1-ubuntu64/bin/prefetch --progress {wildcards.sample}  -O data/
-        /usr/local/sratoolkit.3.1.1-ubuntu64/bin/fasterq-dump --progress --threads 16 {wildcards.sample} -O data/
-        gzip data/{wildcards.sample}.fastq
-        rm -r data/{wildcards.sample}
+        fastqc data/{wildcards.sample}.fastq.gz
         """
-
