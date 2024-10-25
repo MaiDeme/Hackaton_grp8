@@ -1,28 +1,27 @@
-# Définir les fichiers d'entrée
-input_dir = "fastq-exemple/"
-R1_file = f"{input_dir}R1.fastq"
-R2_file = f"{input_dir}R2.fastq"
+# Définition de la liste des échantillons
+samples = [
+    "SRR10379721",
+    "SRR10379722",
+    "SRR10379723",
+    "SRR10379724",
+    "SRR10379725",
+    "SRR10379726",
+]
 
+# Règle cible pour générer les fichiers de sortie pour tous les échantillons
 rule all:
     input:
-        "trimm/R1_trimmed.fastq",
-        "trimm/R2_trimmed.fastq"
+        expand("trimm/{sample}_trimmed.fastq.gz", sample=samples)
 
+# Règle pour appliquer Cutadapt à chaque échantillon
 rule trim:
     input:
-        R1=R1_file,
-        R2=R2_file
+        "data/{sample}.fastq.gz"
     output:
-        R1_trimmed="trimm/R1_trimmed.fastq",
-        R2_trimmed="trimm/R2_trimmed.fastq"
-    threads: 4  # Nombre de threads à utiliser
-    singularity:
-        "cutadapt.sif" 
+        "trimm/{sample}_trimmed.fastq.gz"
     shell:
         """
-        
-        cutadapt -a AGATCGGAAGAGC -o {output.R1_trimmed} {input.R1}
-        cutadapt -a AGATCGGAAGAGC -o {output.R2_trimmed} {input.R2}
+        cutadapt -a AGATCGGAAGAGC -o {output} {input}
         """
 
 # Règle pour créer le dossier de sortie s'il n'existe pas
