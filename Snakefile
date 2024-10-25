@@ -1,4 +1,4 @@
-# Définition de la liste des échantillons
+# Define sample list 
 samples = [
     "SRR10379721",
     "SRR10379722",
@@ -8,12 +8,11 @@ samples = [
     "SRR10379726",
 ]
 
-# Règle cible pour générer les fichiers de sortie pour tous les échantillons
 rule all:
     input:
         expand("trimm/{sample}_trimmed.fastq.gz", sample=samples)
 
-# Règle pour appliquer Cutadapt à chaque échantillon
+# Run cutadapt for each sample 
 rule trim:
     input:
         "data/{sample}.fastq.gz"
@@ -24,7 +23,7 @@ rule trim:
         cutadapt -a AGATCGGAAGAGC -o {output} {input}
         """
 
-# Règle pour créer le dossier de sortie s'il n'existe pas
+# Create trimm directory if it doesn't exist 
 rule create_output_dir:
     output:
         directory("trimm/")
