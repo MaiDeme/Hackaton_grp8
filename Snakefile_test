@@ -1,12 +1,9 @@
-# Define sample list 
+#Define sample list 
 samples = [
-    "SRR10379721",
-    "SRR10379722",
-    "SRR10379723",
-    "SRR10379724",
-    "SRR10379725",
-    "SRR10379726",
+    "test1",
+    "test2"
 ]
+
 
 #Final output
 rule all:  
@@ -16,8 +13,8 @@ rule all:
 #Execute the featureCounts command with the parameters used in the article
 rule featurecounts:
     input:
-        annotation="mapping/gencode.gtf",  #A changer en fonction de la partie mapping
-        bam_file="mapping/{sample}.bam"  #A changer en fonction de la partie mapping
+        annotation="mapping/gencode.gtf",
+        bam_file="mapping/{sample}.bam"
     output:
         "counts/{sample}.txt"
     container:
