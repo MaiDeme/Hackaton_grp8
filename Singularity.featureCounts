@@ -12,4 +12,4 @@ chmod -R 755 /opt/subread-1.4.6-p3-Linux-x86_64
 export PATH=/opt/subread-1.4.6-p3-Linux-x86_64/bin:$PATH
 
 %runscript
-exec featureCounts "@"
+exec /opt/subread-1.4.6-p3-Linux-x86_64/bin/featureCounts "@"

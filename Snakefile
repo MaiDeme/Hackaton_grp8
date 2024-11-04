@@ -25,12 +25,12 @@ rule create_counts_dir:
 #Execute the featureCounts command with the parameters used in the article
 rule featurecounts:
     input:
-        counts_dir="counts" 
-        annotation="mapping/gencode.gtf"
+        counts_dir="counts" ,
+        annotation="mapping/gencode.gtf",
         bam_file="mapping/sample.bam"
     output:
         "counts/{sample}.txt"
-    singularity:
+    container:
         "featurecounts.img"
     shell:
         """       

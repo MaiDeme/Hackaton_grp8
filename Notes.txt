@@ -1,2 +1,1 @@
-Conteneur feature Counts fonctionne 
-PArcontre obligé de préciser le path dans sudo
+test.sh permet de telecharger des fichiers pour pouvoir tester la partie featurecounts avec des petites donnees
