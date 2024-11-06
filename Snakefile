@@ -49,7 +49,7 @@ rule trim:
         "cutadapt.sif" #local cutadapt image 
     shell:
         """
-        cutadapt -a AGATCGGAAGAGC -o {output} {input}
+        cutadapt -a AGATCGGAAGAGC -m 25-o {output} {input}
         """
 
 # Download annotation
@@ -66,7 +66,6 @@ rule download_annotation:
 ### TITOUAN ####
 ## Met tes rules ici
 #######################
-
 
 
 #Execute the featureCounts command with the parameters used in the article
