@@ -23,7 +23,7 @@ rule trim:
         "cutadapt.sif" 
     shell:
         """
-        cutadapt -a AGATCGGAAGAGC -o {output} {input}
+        cutadapt -a AGATCGGAAGAGC  -m 25-o {output} {input}
         """
 
 # Create trimm directory if it doesn't exist 
