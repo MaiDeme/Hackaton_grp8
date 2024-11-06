@@ -1,4 +1,3 @@
-# Define sample list 
 samples = [
     "SRR10379721",
     "SRR10379722",
@@ -12,7 +11,7 @@ rule all:  # by convention this is the expected final output (at the stage the r
     input:
         expand("data/{sample}_fastqc.html", sample=samples),
         expand("trimm/{sample}_trimmed.fastq.gz", sample=samples),
-        expand("counts/{sample}.txt", sample=samples)
+        expand("counts/{sample}.txt", sample=samples),
 
 rule download_fasta:
     output:
@@ -32,7 +31,7 @@ rule fastqc:
         "data/{sample}.fastq.gz"
     output:
         html="data/{sample}_fastqc.html",
-        zip="data/{sample}_fastqc.zip"
+        zip="data/{sample}_fastqc.zip",
     container:
         "docker://maidem/fastqc"
     shell:
@@ -46,16 +45,16 @@ rule trim:
         "data/{sample}.fastq.gz"
     output:
         "trimm/{sample}_trimmed.fastq.gz"
-    #use cutadapt image 
     singularity:
-        "cutadapt.sif" 
+        "cutadapt.sif" #local cutadapt image 
     shell:
         """
         cutadapt -a AGATCGGAAGAGC -o {output} {input}
         """
-#Download annotation
+
+# Download annotation
 rule download_annotation:
-   output: 
+    output: 
         "counts/gencode.gtf"
     shell:
         """ 
@@ -63,7 +62,7 @@ rule download_annotation:
         """
 
 
-#######################""
+#######################
 ### TITOUAN ####
 ## Met tes rules ici
 #######################
