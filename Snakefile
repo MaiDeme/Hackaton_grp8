@@ -13,10 +13,20 @@ rule all:
     input:
         expand("counts/{sample}.txt", sample=samples),
 
+rule download_annotation :
+    input : 
+        "counts"
+    output : 
+        "counts/gencode.gtf"
+    shell:
+        """ 
+        wget -O counts/gencode.gtf "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=CP000253.1"
+        """ 
+
 #Execute the featureCounts command with the parameters used in the article
 rule featurecounts:
     input:
-        annotation="mapping/gencode.gtf",  #A changer en fonction de la partie mapping
+        annotation="counts/gencode.gtf",  
         bam_file="mapping/{sample}.bam"  #A changer en fonction de la partie mapping
     output:
         "counts/{sample}.txt"
