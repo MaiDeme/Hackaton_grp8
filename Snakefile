@@ -16,6 +16,8 @@ rule mapping:
     "full-genome.fasta"
   output:
     "genome_index.tar"
+  singularity:
+    "mapping.sif"
   shell:
     """
     bowtie2-build {input} .genome_index
