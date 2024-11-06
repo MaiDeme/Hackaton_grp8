@@ -4,12 +4,15 @@
 .ncbi
 .cache
 .java
-data
+
+# Data
+data/
 trimm/
+counts/
+
 
 # Images
 cutadapt.sif
 featureCounts.img
 
-counts/
 
