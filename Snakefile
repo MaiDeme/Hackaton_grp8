@@ -46,7 +46,7 @@ rule trim:
     output:
         "trimm/{sample}_trimmed.fastq.gz"
     singularity:
-        "cutadapt.sif" #local cutadapt image 
+        "trimming/cutadapt.sif" #local cutadapt image 
     shell:
         """
         cutadapt -a AGATCGGAAGAGC -m 25-o {output} {input}
@@ -67,7 +67,6 @@ rule download_annotation:
 ## Met tes rules ici
 #######################
 
-
 #Execute the featureCounts command with the parameters used in the article
 rule featurecounts:
     input:
@@ -76,7 +75,7 @@ rule featurecounts:
     output:
         "counts/{sample}.txt"
     container:
-        "featureCounts.img"
+        "featureCounts/featureCounts.img"
     shell:
         """       
         /usr/local/bin/subread-1.4.6-p3-Linux-x86_64/bin/featureCounts -p -t exon -g gene_id \
