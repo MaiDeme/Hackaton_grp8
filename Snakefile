@@ -1,15 +1,9 @@
-GFF_URL = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=CP000253.1"
+# Necessitate bowtie2: sudo apt-get install bowtie2
 FASTA_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000253.1&rettype=fasta&retmode=text"
 
 rule all:
   input:
-    "genome_index.bt2"
-
-rule download_gff:
-  output:
-    "reference.gff"
-  shell:
-    "wget -O {output} '{GFF_URL}'"
+    "genome_index.tar"
 
 rule download_fasta:
   output:
@@ -19,9 +13,11 @@ rule download_fasta:
 
 rule mapping:
   input:
-    "full-genome.fasta",
-    "reference.gff"
+    "full-genome.fasta"
   output:
-    "genome_index.bt2"
+    "genome_index.tar"
   shell:
-    "bowtie-build {input}" 
+    """
+    bowtie2-build {input} .genome_index
+    tar -cf genome_index.tar .genome_index*
+    """
