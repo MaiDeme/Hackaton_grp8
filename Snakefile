@@ -1,3 +1,4 @@
+# Define sample list 
 samples = [
     "SRR10379721",
     "SRR10379722",
@@ -6,10 +7,11 @@ samples = [
     "SRR10379725",
     "SRR10379726",
 ]
+
 rule all:  # by convention this is the expected final output (at the stage the raw data)
     input:
         expand("data/{sample}_fastqc.html", sample=samples),
-
+        expand("trimm/{sample}_trimmed.fastq.gz", sample=samples)
 
 #rule download_fasta:
 #    output:
@@ -23,6 +25,7 @@ rule all:  # by convention this is the expected final output (at the stage the r
 #        gzip data/{wildcards.sample}.fastq
 #        rm -r data/{wildcards.sample}
 #        """
+        
 
 rule fastqc:
     input:
@@ -35,4 +38,19 @@ rule fastqc:
     shell:
         """
         fastqc data/{wildcards.sample}.fastq.gz
+        """
+
+
+# Run cutadapt for each sample 
+rule trim:
+    input:
+        "data/{sample}.fastq.gz"
+    output:
+        "trimm/{sample}_trimmed.fastq.gz"
+    #use cutadapt image 
+    singularity:
+        "cutadapt.sif" 
+    shell:
+        """
+        cutadapt -a AGATCGGAAGAGC -o {output} {input}
         """
