@@ -1,3 +1,6 @@
 .snakemake*
 /.snakemake*
 .ncbi
+.cache
+.java
+data
