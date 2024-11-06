@@ -1,0 +1,28 @@
+#Define sample list 
+samples = [
+    "test1",
+    "test2"
+]
+
+
+#Final output
+rule all:  
+    input:
+        expand("counts/{sample}.txt", sample=samples),
+
+#Execute the featureCounts command with the parameters used in the article
+rule featurecounts:
+    input:
+        annotation="mapping/gencode.gtf",
+        bam_file="mapping/{sample}.bam"
+    output:
+        "counts/{sample}.txt"
+    container:
+        "featureCounts.img"
+    shell:
+        """       
+        /usr/local/bin/subread-1.4.6-p3-Linux-x86_64/bin/featureCounts -p -t exon -g gene_id \
+        -a {input.annotation} \
+        -o {output} \
+        {input.bam_file}
+        """

@@ -1,0 +1,1 @@
+Ce bout de Pipeline fonctionne pour les fichiers tests tirés de la banque de données de ENCODE

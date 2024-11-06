@@ -1,3 +1,4 @@
+# Cache file
 .snakemake*
 /.snakemake*
 .ncbi
@@ -5,3 +6,10 @@
 .java
 data
 trimm/
+
+# Images
+cutadapt.sif
+featureCounts.img
+
+counts/
+
