@@ -12,24 +12,24 @@ GFF_URL = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff
 
 rule all:  # by convention this is the expected final output (at the stage the raw data)
     input:
-        expand("data/{sample}_fastqc.html", sample=samples),
+        #expand("data/{sample}_fastqc.html", sample=samples),
         expand("trimm/{sample}_trimmed.fastq.gz", sample=samples),
-        "genome_index.tar",
+        expand("{sample}_aligned.sam", sample=samples),
         #expand("counts/{sample}.txt", sample=samples),
 
-#rule download_fasta:
-#    output:
-#        "data/{sample}.fastq.gz", #compressed file
-#    container:
-#        "docker://maidem/fasterq-dump"
-#    shell:
-#        """
-#        prefetch --progress {wildcards.sample}  -O data/
-#        fasterq-dump --progress --threads 16 {wildcards.sample} -O data/
-#        gzip data/{wildcards.sample}.fastq
-#        rm -r data/{wildcards.sample}
-#        """
-#
+rule download_fasta:
+    output:
+        "data/{sample}.fastq.gz", #compressed file
+    container:
+        "docker://maidem/fasterq-dump"
+    shell:
+        """
+        prefetch --progress {wildcards.sample}  -O data/
+        fasterq-dump --progress --threads 16 {wildcards.sample} -O data/
+        gzip data/{wildcards.sample}.fastq
+        rm -r data/{wildcards.sample}
+        """
+
 #rule fastqc:
 #    input:
 #        "data/{sample}.fastq.gz"
@@ -44,7 +44,8 @@ rule all:  # by convention this is the expected final output (at the stage the r
 #        """
 #
 
-# Run cutadapt for each sample 
+# === Trimming: Run cutadapt for each sample  ===
+
 rule trim:
     input:
         "data/{sample}.fastq.gz"
@@ -57,7 +58,11 @@ rule trim:
         cutadapt -a AGATCGGAAGAGC -m 25 -o {output} {input}
         """
 
-# Download annotation
+# === === === === === === === === === === === ===
+
+
+# === ===  Download genome annotation === === ===
+
 rule download_annotation:
     output: 
         "counts/gencode.gff"
@@ -66,14 +71,18 @@ rule download_annotation:
         wget -O {output} '{GFF_URL}'
         """
 
-# Mapping, necessitate bowtie2: sudo apt-get install bowtie2 ===
-rule download_fasta:
+# === === === === === === === === === === === ===
+
+
+# === ===  Index & Mapping: bowtie2   === === ===
+
+rule download_genome_fasta:
   output:
     "full-genome.fasta"
   shell:
     "wget -O {output} '{FASTA_URL}'"
 
-rule mapping:
+rule indexing:
   input:
     "full-genome.fasta"
   output:
@@ -86,7 +95,21 @@ rule mapping:
     tar -cf genome_index.tar .genome_index*
     """
 
-# ===
+rule mapping:
+  input:
+    reads = "trimm/{sample}_trimmed.fastq.gz",
+    index = "genome_index.tar"
+  output:
+    "{sample}_aligned.sam"
+  singularity:
+    "mapping.sif"
+  shell:
+    """
+    tar -xf {input.index}
+    bowtie2 -x {input.index.replace('.tar', '')} -U {input.reads} -S {output}
+    """
+
+# === === === === === === === === === === === ===
 
 #Execute the featureCounts command with the parameters used in the article
 #rule featurecounts:
