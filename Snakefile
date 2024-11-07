@@ -55,10 +55,10 @@ rule trim:
 # Download annotation
 rule download_annotation:
     output: 
-        "counts/gencode.gtf"
+        "counts/gencode.gff"
     shell:
         """ 
-        wget -O counts/gencode.gtf 'https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=CP000253.1'
+        wget -O {output} 'https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=CP000253.1'
         """
 
 
@@ -70,7 +70,7 @@ rule download_annotation:
 #Execute the featureCounts command with the parameters used in the article
 #rule featurecounts:
 #    input:
-#        annotation="counts/gencode.gtf",  
+#        annotation="counts/gencode.gff",  
 #        bam_file="mapping/{sample}.bam"  #A changer en fonction de la partie mapping
 #    output:
 #        "counts/{sample}.txt"
