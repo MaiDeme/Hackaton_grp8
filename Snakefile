@@ -61,6 +61,49 @@ rule trim:
 # === === === === === === === === === === === ===
 
 
+
+
+
+# === ===  Index & Mapping: bowtie2   === === ===
+
+rule download_genome_fasta:
+  output:
+    "mapping/full-genome.fasta"
+  shell:
+    "wget -O {output} '{FASTA_URL}'"
+
+rule indexing:
+  input:
+    "mapping/full-genome.fasta"
+  output:
+    "mapping/genome_index.tar"
+  singularity:
+    "mapping.sif"
+  shell:
+    """
+    bowtie2-build {input} .genome_index
+    tar -cf genome_index.tar .genome_index*
+    """
+
+rule mapping:
+  input:
+    reads = "trimm/{sample}_trimmed.fastq.gz",
+    index = "mapping/genome_index.tar",
+  output:
+    "mapping/{sample}_aligned.sam"
+  singularity:
+    "mapping.sif"
+  shell:
+    """
+    base_index={input.index.replace('.tar', '')}
+    tar -xf {input.index}
+    bowtie2 -x {base_index} -U {input.reads} -S {output}
+    """
+
+# === === === === === === === === === === === ===
+
+
+
 # === ===  Download genome annotation === === ===
 
 rule download_annotation:
@@ -73,50 +116,12 @@ rule download_annotation:
 
 # === === === === === === === === === === === ===
 
+# === ===  Counting reads expression : featureCounts === === ===
 
-# === ===  Index & Mapping: bowtie2   === === ===
-
-rule download_genome_fasta:
-  output:
-    "full-genome.fasta"
-  shell:
-    "wget -O {output} '{FASTA_URL}'"
-
-rule indexing:
-  input:
-    "full-genome.fasta"
-  output:
-    "genome_index.tar"
-  singularity:
-    "mapping.sif"
-  shell:
-    """
-    bowtie2-build {input} .genome_index
-    tar -cf genome_index.tar .genome_index*
-    """
-
-rule mapping:
-  input:
-    reads = "trimm/{sample}_trimmed.fastq.gz",
-    index = "genome_index.tar",
-  output:
-    "{sample}_aligned.sam"
-  singularity:
-    "mapping.sif"
-  shell:
-    """
-    base_index={input.index.replace('.tar', '')}
-    tar -xf {input.index}
-    bowtie2 -x {base_index} -U {input.reads} -S {output}
-    """
-
-# === === === === === === === === === === === ===
-
-#Execute the featureCounts command with the parameters used in the article
 #rule featurecounts:
 #    input:
 #        annotation="counts/gencode.gff",  
-#        bam_file="mapping/{sample}.bam"  #A changer en fonction de la partie mapping
+#        bam_file="mapping/{sample}_aligned.bam"  #A changer en fonction de la partie mapping
 #    output:
 #        "counts/{sample}.txt"
 #    container:
@@ -129,4 +134,6 @@ rule mapping:
 #        {input.bam_file}
 #        """
 #
+
+# === === === === === === === === === === === ===
 
