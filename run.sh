@@ -1,3 +1,10 @@
+#!/bin/bash
+
+# Singularity mapping image
+sudo docker build -t mapping_image mapping/
+sudo singularity build mapping.sif docker-daemon://mapping_image
+
+# Singularity cutadapt image
 sudo docker build -t cutadapt-image:1.11 trimming/
 sudo singularity build trimming/cutadapt.sif docker-daemon://cutadapt-image:1.11
 

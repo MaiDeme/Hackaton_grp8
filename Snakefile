@@ -7,10 +7,14 @@ samples = [
     "SRR10379726",
 ]
 
+FASTA_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000253.1&rettype=fasta&retmode=text"
+GFF_URL = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=CP000253.1"
+
 rule all:  # by convention this is the expected final output (at the stage the raw data)
     input:
         expand("data/{sample}_fastqc.html", sample=samples),
         expand("trimm/{sample}_trimmed.fastq.gz", sample=samples),
+        "genome_index.tar",
         #expand("counts/{sample}.txt", sample=samples),
 
 #rule download_fasta:
@@ -39,7 +43,8 @@ rule all:  # by convention this is the expected final output (at the stage the r
 #        fastqc data/{wildcards.sample}.fastq.gz
 #        """
 #
-#Run cutadapt for each sample 
+
+# Run cutadapt for each sample 
 rule trim:
     input:
         "data/{sample}.fastq.gz"
@@ -58,14 +63,30 @@ rule download_annotation:
         "counts/gencode.gff"
     shell:
         """ 
-        wget -O {output} 'https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=CP000253.1'
+        wget -O {output} '{GFF_URL}'
         """
 
+# Mapping, necessitate bowtie2: sudo apt-get install bowtie2 ===
+rule download_fasta:
+  output:
+    "full-genome.fasta"
+  shell:
+    "wget -O {output} '{FASTA_URL}'"
 
-#######################
-### TITOUAN ####
-## Met tes rules ici
-#######################
+rule mapping:
+  input:
+    "full-genome.fasta"
+  output:
+    "genome_index.tar"
+  singularity:
+    "mapping.sif"
+  shell:
+    """
+    bowtie2-build {input} .genome_index
+    tar -cf genome_index.tar .genome_index*
+    """
+
+# ===
 
 #Execute the featureCounts command with the parameters used in the article
 #rule featurecounts:
@@ -84,5 +105,4 @@ rule download_annotation:
 #        {input.bam_file}
 #        """
 #
-
 

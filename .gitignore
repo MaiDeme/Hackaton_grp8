@@ -10,9 +10,9 @@ data/
 trimm/
 counts/
 
-
 # Images
 cutadapt.sif
 featureCounts.img
 
-
+# Python venv
+env
