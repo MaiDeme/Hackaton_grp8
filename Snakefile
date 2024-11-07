@@ -1,10 +1,10 @@
 samples = [
     "SRR10379721",
     "SRR10379722",
-    "SRR10379723",
-    "SRR10379724",
-    "SRR10379725",
-    "SRR10379726",
+   # "SRR10379723",
+   # "SRR10379724",
+   # "SRR10379725",
+   # "SRR10379726",
 ]
 
 FASTA_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000253.1&rettype=fasta&retmode=text"
@@ -12,45 +12,45 @@ GFF_URL = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff
 
 rule all:  # by convention this is the expected final output (at the stage the raw data)
     input:
-        #expand("data/{sample}_fastqc.html", sample=samples),
-        expand("trimm/{sample}_trimmed.fastq.gz", sample=samples),
-        expand("{sample}_aligned.sam", sample=samples),
-        #expand("counts/{sample}.txt", sample=samples),
+        expand("results/data/{sample}_fastqc.html", sample=samples),
+        expand("results/trimm/{sample}_trimmed.fastq.gz", sample=samples),
+        expand("results/mapping/{sample}_aligned.sam", sample=samples),
+        expand("results/counts/{sample}.txt", sample=samples),
 
-#rule download_fasta:
-#    output:
-#        "data/{sample}.fastq.gz", #compressed file
-#    container:
-#        "docker://maidem/fasterq-dump"
-#    shell:
-#        """
-#        prefetch --progress {wildcards.sample}  -O data/
-#        fasterq-dump --progress --threads 16 {wildcards.sample} -O data/
-#        gzip data/{wildcards.sample}.fastq
-#        rm -r data/{wildcards.sample}
-#        """
+rule download_fasta:
+    output:
+        "results/data/{sample}.fastq.gz", #compressed file
+    container:
+        "docker://maidem/fasterq-dump"
+    shell:
+        """
+        prefetch --progress {wildcards.sample}  -O data/
+        fasterq-dump --progress --threads 16 {wildcards.sample} -O results/data/
+        gzip results/data/{wildcards.sample}.fastq
+        rm -r results/data/{wildcards.sample}
+        """
 
-#rule fastqc:
-#    input:
-#        "data/{sample}.fastq.gz"
-#    output:
-#        html="data/{sample}_fastqc.html",
-#        zip="data/{sample}_fastqc.zip",
-#    container:
-#        "docker://maidem/fastqc"
-#    shell:
-#        """
-#        fastqc data/{wildcards.sample}.fastq.gz
-#        """
-#
+rule fastqc:
+    input:
+        "results/data/{sample}.fastq.gz"
+    output:
+        html="results/data/{sample}_fastqc.html",
+        zip="results/data/{sample}_fastqc.zip",
+    container:
+        "docker://maidem/fastqc"
+    shell:
+        """
+        fastqc results/data/{wildcards.sample}.fastq.gz
+        """
+
 
 # === Trimming: Run cutadapt for each sample  ===
 
 rule trim:
     input:
-        "data/{sample}.fastq.gz"
+        "results/data/{sample}.fastq.gz"
     output:
-        "trimm/{sample}_trimmed.fastq.gz"
+        "results/trimm/{sample}_trimmed.fastq.gz"
     singularity:
         "trimming/cutadapt.sif" #local cutadapt image 
     shell:
@@ -68,17 +68,17 @@ rule trim:
 
 rule download_genome_fasta:
   output:
-    "mapping/full-genome.fasta"
+    "results/mapping/full-genome.fasta"
   shell:
     "wget -O {output} '{FASTA_URL}'"
 
 rule indexing:
   input:
-    "mapping/full-genome.fasta"
+    "results/mapping/full-genome.fasta"
   output:
-    "mapping/genome_index.tar"
+    "results/mapping/genome_index.tar"
   singularity:
-    "mapping.sif"
+    "mapping/mapping.sif"
   shell:
     """
     bowtie2-build {input} .genome_index
@@ -87,10 +87,10 @@ rule indexing:
 
 rule mapping:
   input:
-    reads = "trimm/{sample}_trimmed.fastq.gz",
-    index = "mapping/genome_index.tar",
+    reads = "results/trimm/{sample}_trimmed.fastq.gz",
+    index = "results/mapping/genome_index.tar",
   output:
-    "mapping/{sample}_aligned.sam"
+    "results/mapping/{sample}_aligned.sam"
   singularity:
     "mapping.sif"
   shell:
@@ -108,7 +108,7 @@ rule mapping:
 
 rule download_annotation:
     output: 
-        "counts/gencode.gff"
+        "results/counts/gencode.gff"
     shell:
         """ 
         wget -O {output} '{GFF_URL}'
@@ -118,22 +118,22 @@ rule download_annotation:
 
 # === ===  Counting reads expression : featureCounts === === ===
 
-#rule featurecounts:
-#    input:
-#        annotation="counts/gencode.gff",  
-#        sam_file="mapping/{sample}_aligned.sam"  #A changer en fonction de la partie mapping
-#    output:
-#        "counts/{sample}.txt"
-#    container:
-#        "featureCounts/featureCounts.img"
-#    shell:
-#        """       
-#        /usr/local/bin/subread-1.4.6-p3-Linux-x86_64/bin/featureCounts -p -t exon -g gene_id \
-#        -a {input.annotation} \
-#        -o {output} \
-#        {input.sam_file}
-#        """
-#
+rule featurecounts:
+    input:
+        annotation="results/counts/gencode.gff",  
+        sam_file="results/mapping/{sample}_aligned.sam"  #A changer en fonction de la partie mapping
+    output:
+        "results/counts/{sample}.txt"
+    container:
+        "featureCounts/featureCounts.img"
+    shell:
+        """       
+        /usr/local/bin/subread-1.4.6-p3-Linux-x86_64/bin/featureCounts -p -t exon -g gene_id \
+        -a {input.annotation} \
+        -o {output} \
+        {input.sam_file}
+        """
+
 
 # === === === === === === === === === === === ===
 
