@@ -121,7 +121,7 @@ rule download_annotation:
 #rule featurecounts:
 #    input:
 #        annotation="counts/gencode.gff",  
-#        bam_file="mapping/{sample}_aligned.bam"  #A changer en fonction de la partie mapping
+#        sam_file="mapping/{sample}_aligned.sam"  #A changer en fonction de la partie mapping
 #    output:
 #        "counts/{sample}.txt"
 #    container:
@@ -131,7 +131,7 @@ rule download_annotation:
 #        /usr/local/bin/subread-1.4.6-p3-Linux-x86_64/bin/featureCounts -p -t exon -g gene_id \
 #        -a {input.annotation} \
 #        -o {output} \
-#        {input.bam_file}
+#        {input.sam_file}
 #        """
 #
 
