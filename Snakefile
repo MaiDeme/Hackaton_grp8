@@ -17,18 +17,18 @@ rule all:  # by convention this is the expected final output (at the stage the r
         expand("{sample}_aligned.sam", sample=samples),
         #expand("counts/{sample}.txt", sample=samples),
 
-rule download_fasta:
-    output:
-        "data/{sample}.fastq.gz", #compressed file
-    container:
-        "docker://maidem/fasterq-dump"
-    shell:
-        """
-        prefetch --progress {wildcards.sample}  -O data/
-        fasterq-dump --progress --threads 16 {wildcards.sample} -O data/
-        gzip data/{wildcards.sample}.fastq
-        rm -r data/{wildcards.sample}
-        """
+#rule download_fasta:
+#    output:
+#        "data/{sample}.fastq.gz", #compressed file
+#    container:
+#        "docker://maidem/fasterq-dump"
+#    shell:
+#        """
+#        prefetch --progress {wildcards.sample}  -O data/
+#        fasterq-dump --progress --threads 16 {wildcards.sample} -O data/
+#        gzip data/{wildcards.sample}.fastq
+#        rm -r data/{wildcards.sample}
+#        """
 
 #rule fastqc:
 #    input:
@@ -98,15 +98,16 @@ rule indexing:
 rule mapping:
   input:
     reads = "trimm/{sample}_trimmed.fastq.gz",
-    index = "genome_index.tar"
+    index = "genome_index.tar",
   output:
     "{sample}_aligned.sam"
   singularity:
     "mapping.sif"
   shell:
     """
+    base_index={input.index.replace('.tar', '')}
     tar -xf {input.index}
-    bowtie2 -x {input.index.replace('.tar', '')} -U {input.reads} -S {output}
+    bowtie2 -x {base_index} -U {input.reads} -S {output}
     """
 
 # === === === === === === === === === === === ===
