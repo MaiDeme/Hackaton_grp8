@@ -14,6 +14,8 @@ rule all:  # by convention this is the expected final output
   input:
     expand("results/counts/{sample}.txt", sample=samples),
 
+# === === === === Downloading data  === === ===
+
 rule download_fasta:
   output:
     "results/data/{sample}.fastq.gz",
@@ -27,6 +29,12 @@ rule download_fasta:
     rm -r results/data/{wildcards.sample}
     """
 
+# === === === === === === === === === === === ===
+
+
+
+# === === === === Fastqc  === === === === === ===
+
 rule fastqc:
   input:
     "data/{sample}.fastq.gz"
@@ -39,6 +47,9 @@ rule fastqc:
     """
     fastqc results/data/{wildcards.sample}.fastq.gz
     """
+
+# === === === === === === === === === === === ===
+
 
 
 # === Trimming: Run cutadapt for each sample  ===
@@ -55,8 +66,6 @@ rule trim:
     cutadapt -a AGATCGGAAGAGC -m 25 -o {output} {input}
     """
 # === === === === === === === === === === === ===
-
-
 
 
 
@@ -112,7 +121,9 @@ rule download_annotation:
 
 # === === === === === === === === === === === ===
 
-# === ===  Counting reads expression : featureCounts === === ===
+
+
+# == Counting reads expression: featureCounts ===
 
 rule featurecounts:
   input:
