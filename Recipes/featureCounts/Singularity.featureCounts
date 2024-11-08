@@ -1,0 +1,15 @@
+Bootstrap: docker
+From: alpine:3.14
+
+%post
+apk add --no-cache bash  wget tar make
+wget -O /usr/local/bin/subread-1.4.6-p3.tar.gz \
+https://sourceforge.net/projects/subread/files/subread-1.4.6-p3/subread-1.4.6-p3-Linux-x86_64.tar.gz
+tar -xvzf /usr/local/bin/subread-1.4.6-p3.tar.gz -C /usr/local/bin/
+chmod -R 755 /usr/local/bin/subread-1.4.6-p3-Linux-x86_64
+
+%environment
+export PATH=/usr/local/bin/subread-1.4.6-p3-Linux-x86_64/bin:$PATH
+
+%runscript
+exec "$@"
