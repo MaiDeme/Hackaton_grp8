@@ -12,6 +12,7 @@ GFF_URL = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff
 
 rule all:  # by convention this is the expected final output 
   input:
+    expand("results/fastqc/{sample}_fastqc.html", sample=samples),
     expand("results/counts/{sample}.txt", sample=samples),
 
 # === === === === Downloading data  === === ===
@@ -22,8 +23,10 @@ rule download_fasta:
   container:
     "docker://maidem/fasterq-dump:latest"
   shell:
+    # prefetch is used to download the data from SRA
+    # then fasterq-dump is used to convert the data to fastq
     """
-    prefetch --progress {wildcards.sample}  -O data/
+    prefetch --progress {wildcards.sample}  -O results/data/    
     fasterq-dump --progress --threads 16 {wildcards.sample} -O results/data/
     gzip results/data/{wildcards.sample}.fastq
     rm -r results/data/{wildcards.sample}
@@ -37,7 +40,7 @@ rule download_fasta:
 
 rule fastqc:
   input:
-    "data/{sample}.fastq.gz"
+    "results/data/{sample}.fastq.gz"
   output:
     html="results/fastqc/{sample}_fastqc.html",
     zip="results/fastqc/{sample}_fastqc.zip",
@@ -45,7 +48,7 @@ rule fastqc:
     "docker://maidem/fastqc:latest"
   shell:
     """
-    fastqc results/data/{wildcards.sample}.fastq.gz
+    fastqc results/fastqc/{wildcards.sample}.fastq.gz
     """
 
 # === === === === === === === === === === === ===
@@ -66,7 +69,6 @@ rule trim:
     cutadapt -a AGATCGGAAGAGC -m 25 -o {output} {input}
     """
 # === === === === === === === === === === === ===
-
 
 
 # === ===  Index & Mapping: bowtie2   === === ===
@@ -128,7 +130,7 @@ rule download_annotation:
 rule featurecounts:
   input:
     annotation="results/counts/gencode.gff",  
-    sam_file="results/mapping/{sample}_aligned.sam"  #A changer en fonction de la partie mapping
+    sam_file="results/mapping/{sample}_aligned.sam"
   output:
     "results/counts/{sample}.txt"
   container:
@@ -140,7 +142,6 @@ rule featurecounts:
     -o {output} \
     {input.sam_file}
     """
-
 
 # === === === === === === === === === === === ===
 
