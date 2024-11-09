@@ -48,7 +48,7 @@ rule fastqc:
     "docker://maidem/fastqc:latest"
   shell:
     """
-    fastqc results/fastqc/{wildcards.sample}.fastq.gz
+    fastqc results/data/{wildcards.sample}.fastq.gz
     """
 
 # === === === === === === === === === === === ===
@@ -69,6 +69,25 @@ rule trim:
     cutadapt -a AGATCGGAAGAGC -m 25 -o {output} {input}
     """
 # === === === === === === === === === === === ===
+
+
+# === === Fastqc after trimming === === === === ===
+
+rule second_fastqc:
+  input:
+    "results/trimm/{sample}_trimmed.fastq.gz"
+  output:
+    html="results/2fastqc/{sample}_fastqc.html",
+    zip="results/2fastqc/{sample}_fastqc.zip",
+  container:
+    "docker://maidem/fastqc:latest"
+  shell:
+    """
+    fastqc results/trimm/{wildcards.sample}_trimmed.fastq.gz
+    """
+
+# === === === === === === === === === === === ===
+
 
 
 # === ===  Index & Mapping: bowtie2   === === ===
