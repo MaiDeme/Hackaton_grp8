@@ -1,11 +1,17 @@
-#featureCounts : outil de comptage des gènes
+## ReproHackathon 2024
 
-#Singularity.featurecounts 
-#Recette pour construire le conteneur de featureCounts version 1.4.6-p3
+This is a repository for the project of the course "ReproHackathon". The goal of this project is to create a reproducible workflow for the analysis of RNA-seq data. The workflow will be implemented using the Snakemake workflow management system. The workflow include the following steps:
 
+1. Retrieving the raw data using fasterq-dump from sratoolkit 3.1.1
+2. Quality control using FastQC 0.12.1
+3. Trimming using cutadapt 1.11
+4. Mapping using Bowtie 
+5. Counting using featureCounts from subread 1.4.6-p3
 
-## Dans cette branche 'main' se trouve le dossier principal qui servira de rendu final ou le Snakefile est le workflow qui contient tout les rules necessaires au procédé.
-## Chaque dossier contient une image initialement travaillé individuellement dans une autre branche pour une création et un test plus facile. 
-## Bowtie contient l'image qui permet d'utiliser Bowtie pour indexer et mapper , trimming contient l'image qui permet de nettoyer puis trier les sequences etc...
+In the `main` branch, you will find the final version of the workflow.
+Use the following command to run the workflow:
 
-
+```
+./run.sh
+```
+Each folder contains images created individually by different contributors, each in a separate branch to streamline creation and testing
