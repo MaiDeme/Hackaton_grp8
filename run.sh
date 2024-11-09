@@ -18,3 +18,4 @@ fi
 
 snakemake --forceall --cores all --use-singularity
 #snakemake --forceall --dag | dot -Tpdf > dag.pdf
+snakemake --rulegraph | dot -Tpng -o rg.png
