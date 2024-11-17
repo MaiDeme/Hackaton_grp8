@@ -13,7 +13,8 @@ GFF_URL = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff
 rule all:  # by convention this is the expected final output 
   input:
     expand("results/fastqc/{sample}_fastqc.html", sample=samples),
-    expand("results/counts/{sample}.txt", sample=samples),
+   expand("results/counts/{sample}.txt", sample=samples),
+   "results/DESeq2/DESeq2_results.txt"
 
 # === === === === Downloading data  === === ===
 
@@ -164,3 +165,14 @@ rule featurecounts:
 
 # === === === === === === === === === === === ===
 
+# === === === === DESeq2 === === === === === ===
+rule DESeq2:
+  output:
+    "results/DESeq2/DESeq2_results.txt"
+  container:
+    "docker://maidem/deseq2:latest"
+  shell:
+    """
+    Rscript DESeq2.R 
+    """
+# === === === === === === === === === === === ===
