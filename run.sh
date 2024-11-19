@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Singularity mapping image
-sudo docker build -t bowtie_image:latest bowtie/
-sudo singularity build --force bowtie/bowtie.sif docker-daemon://bowtie_image:latest
-
 # Singularity cutadapt image
 sudo docker build -t cutadapt-image:1.11 trimming/
 sudo singularity build --force trimming/cutadapt.sif docker-daemon://cutadapt-image:1.11
