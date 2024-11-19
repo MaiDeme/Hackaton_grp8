@@ -9,8 +9,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Installer la version spécifique de Cutadapt (1.11)
 RUN pip install cutadapt==1.11
 
-# Créer un répertoire de travail
-WORKDIR /data
-
 # Définir la commande d'entrée par défaut pour le container
 ENTRYPOINT ["cutadapt"]
