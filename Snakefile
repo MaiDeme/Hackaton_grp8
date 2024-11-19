@@ -9,6 +9,7 @@ samples = [
 
 FASTA_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000253.1&rettype=fasta&retmode=text"
 GFF_URL = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=CP000253.1"
+BOWTIE_IMAGE_URL = "https://zenodo.org/records/14186800/files/bowtie.sif?download=1"
 
 rule all:  # by convention this is the expected final output 
   input:
@@ -93,6 +94,12 @@ rule second_fastqc:
 
 # === ===  Index & Mapping: bowtie2   === === ===
 
+rule downlad_bowtie_image:
+  output:
+    "bowtie/bowtie.sif"
+  shell:
+    "wget -O {output} '{BOWTIE_IMAGE_URL}'"
+
 rule download_genome_fasta:
   output:
     "results/mapping/full-genome.fasta"
@@ -101,14 +108,15 @@ rule download_genome_fasta:
 
 rule indexing:
   input:
-    "results/mapping/full-genome.fasta"
+    fasta = "results/mapping/full-genome.fasta",
+    bowtie_image = "bowtie/bowtie.sif"
   output:
     "results/mapping/genome_index.tar"
   singularity:
-    "bowtie/bowtie.sif"
+    "{inputs.bowtie_image}"
   shell:
     """
-    bowtie2-build {input} .genome_index
+    bowtie2-build {input.fasta} .genome_index
     tar -cf {output} .genome_index* --remove-files
     """
 
@@ -116,10 +124,11 @@ rule mapping:
   input:
     reads = "results/trimm/{sample}_trimmed.fastq.gz",
     index = "results/mapping/genome_index.tar",
+    bowtie_image = "bowtie/bowtie.sif"
   output:
     "results/mapping/{sample}_aligned.sam"
   singularity:
-    "bowtie/bowtie.sif"
+    "{input.bowtie_image}"
   shell:
     """
     base_index=$(basename {input.index} .tar)
