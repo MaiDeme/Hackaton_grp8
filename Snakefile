@@ -134,7 +134,6 @@ rule mapping:
     tar -xf {input.index} -C results/mapping 
     bowtie2 -x results/mapping/.$base_index -U {input.reads} -S {output}
     """
-
 # === === === === === === === === === === === ===
 
 # === ===  Compression of .sam into .bam === === ===
@@ -150,6 +149,7 @@ rule convert_bam:
     samtools view -bS {input.sam_file} > {output}
     rm -f {input.sam_file}
     """
+# === === === === === === === === === === === ===
 
 # === ===  Download genome annotation === === ===
 
