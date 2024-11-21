@@ -1,5 +1,5 @@
-# Program:featureCounts v1.4.6-p3; Command:"/usr/local/bin/subread-1.4.6-p3-Linux-x86_64/bin/featureCounts" "-p" "-t" "gene" "-g" "ID" "-T" "16" "-s" "1" "-a" "results/counts/gencode.gff" "-o" "results/counts/SRR10379722.txt" "results/mapping/SRR10379722_aligned.sam" 
-Geneid	Chr	Start	End	Strand	Length	results/mapping/SRR10379722_aligned.sam
+# Program:featureCounts v1.4.6-p3; Command:"/usr/local/bin/subread-1.4.6-p3-Linux-x86_64/bin/featureCounts" "-p" "-t" "gene" "-g" "ID" "-T" "16" "-s" "1" "-a" "results/counts/gencode.gff" "-o" "results/counts/SRR10379722.txt" "results/mapping/SRR10379722_aligned.bam" 
+Geneid	Chr	Start	End	Strand	Length	results/mapping/SRR10379722_aligned.bam
 gene-SAOUHSC_00001	CP000253.1	517	1878	+	1362	16913
 gene-SAOUHSC_00002	CP000253.1	2156	3289	+	1134	12118
 gene-SAOUHSC_00003	CP000253.1	3670	3915	+	246	1190
