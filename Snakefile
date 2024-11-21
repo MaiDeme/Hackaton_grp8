@@ -115,12 +115,13 @@ rule mapping:
         "results/mapping/{sample}_aligned.sam"
     singularity:
         "Recipes/bowtie/bowtie.sif"
-    shell:
-        """
-        base_index={input.index.replace('.tar', '')}
-        tar -xf {input.index}
-        bowtie2 -x {base_index} -U {input.reads} -S {output}
-        """
+    run:
+        base_index = input.index.replace('.tar', '')
+
+        shell("""
+            tar -xf {input.index} -C results/mapping
+            bowtie2 -x {base_index} -U {input.reads} -S {output}
+        """)
 
 # === === === === === === === === === === === ===
 
@@ -163,3 +164,20 @@ rule featurecounts:
 
 # === === === === === === === === === === === ===
 
+rule mapping:
+    message:
+        "Mapping de {wildcards.sample}"
+    input:
+        reads = "results/trimm/{sample}_trimmed.fastq.gz",
+        index = "results/mapping/genome_index.tar",
+    output:
+        "results/mapping/{sample}_aligned.sam"
+    singularity:
+        "Recipes/bowtie/bowtie.sif"
+    run:
+        base_index = input.index.replace('.tar', '')
+
+        shell("""
+            tar -xf {input.index} -C results/mapping
+            bowtie2 -x {base_index} -U {input.reads} -S {output}
+        """)
