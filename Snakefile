@@ -92,7 +92,7 @@ rule second_fastqc:
 
 
 
-# === ===  Index & Mapping: bowtie2   === === ===
+# === ===  Index & Mapping: bowtie   === === ===
 
 rule downlad_bowtie_image:
   output:
@@ -116,7 +116,7 @@ rule indexing:
     "{inputs.bowtie_image}"
   shell:
     """
-    bowtie2-build {input.fasta} .genome_index
+    bowtie-build {input.fasta} .genome_index
     tar -cf {output} .genome_index* --remove-files
     """
 
@@ -133,7 +133,7 @@ rule mapping:
     """
     base_index=$(basename {input.index} .tar)
     tar -xf {input.index} -C results/mapping 
-    bowtie2 -x results/mapping/.$base_index -U {input.reads} -S {output}
+    bowtie -x results/mapping/.$base_index -U {input.reads} -S {output}
     """
 
 # === === === === === === === === === === === ===
