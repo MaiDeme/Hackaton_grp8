@@ -10,6 +10,7 @@ samples = [
 FASTA_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000253.1&rettype=fasta&retmode=text"
 GFF_URL = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=CP000253.1"
 BOWTIE_IMAGE_URL = "https://zenodo.org/records/14186800/files/bowtie.sif?download=1"
+FEATURES_COUNTS_IMAGE_URL = "https://zenodo.org/records/14229723/files/featureCounts.sif?download=1"
 
 rule all:  # by convention this is the expected final output 
   input:
@@ -19,60 +20,55 @@ rule all:  # by convention this is the expected final output
     "results/DESeq2/DESeq2_results.txt"
 
 # === === === === Downloading data  === === ===
+rule download_fasta:
+  output:
+    "results/data/{sample}.fastq.gz",
+  container:
+    "docker://maidem/fasterq-dump:latest"
+  shell:
+    # prefetch is used to download the data from SRA
+    # then fasterq-dump is used to convert the data to fastq
+    """
+    prefetch --progress {wildcards.sample}  -O results/data/    
+    fasterq-dump --progress --threads 16 {wildcards.sample} -O results/data/
+    gzip results/data/{wildcards.sample}.fastq
+    rm -r results/data/{wildcards.sample}
+    """
 
-#rule download_fasta:
-#  output:
-#    "results/data/{sample}.fastq.gz",
-#  container:
-#    "docker://maidem/fasterq-dump:latest"
-#  shell:
-#    # prefetch is used to download the data from SRA
-#    # then fasterq-dump is used to convert the data to fastq
-#    """
-#    prefetch --progress {wildcards.sample}  -O results/data/    
-#    fasterq-dump --progress --threads 16 {wildcards.sample} -O results/data/
-#    gzip results/data/{wildcards.sample}.fastq
-#    rm -r results/data/{wildcards.sample}
-#    """
-#
-## === === === === === === === === === === === ===
-#
-#
-#
-## === === === === Fastqc  === === === === === ===
-#
-#rule fastqc:
-#  input:
-#    "results/data/{sample}.fastq.gz"
-#  output:
-#    html="results/fastqc/{sample}_fastqc.html",
-#    zip="results/fastqc/{sample}_fastqc.zip",
-#  container:
-#    "docker://maidem/fastqc:latest"
-#  shell:
-#    """
-#    fastqc {input} -O results/fastqc/
-#    """
-#
-## === === === === === === === === === === === ===
-#
-#
-#
-## === Trimming: Run cutadapt for each sample  ===
-#
-#rule trim:
-#  input:
-#    "results/data/{sample}.fastq.gz"
-#  output:
-#    "results/trimm/{sample}_trimmed.fastq.gz"
-#  singularity:
-#    "trimming/cutadapt.sif" #local cutadapt image 
-#  shell:
-#    """
-#    cutadapt -a AGATCGGAAGAGC -m 25 -o {output} {input}
-#    """
-## === === === === === === === === === === === ===
-#
+# === === === === === === === === === === === ===
+
+# === === === === Fastqc  === === === === === ===
+
+rule fastqc:
+  input:
+    "results/data/{sample}.fastq.gz"
+  output:
+    html="results/fastqc/{sample}_fastqc.html",
+    zip="results/fastqc/{sample}_fastqc.zip",
+  container:
+    "docker://maidem/fastqc:latest"
+  shell:
+    """
+    fastqc {input} -O results/fastqc/
+    """
+
+# === === === === === === === === === === === ===
+
+# === Trimming: Run cutadapt for each sample  ===
+
+rule trim:
+  input:
+    "results/data/{sample}.fastq.gz"
+  output:
+    "results/trimm/{sample}_trimmed.fastq.gz"
+  container:
+    "docker://maximeparizot/cutadapt-image:1.11"
+  shell:
+    """
+    cutadapt -a AGATCGGAAGAGC -m 25 -o {output} {input}
+    """
+# === === === === === === === === === === === ===
+
 
 # === === Fastqc after trimming === === === === ===
 
@@ -93,11 +89,6 @@ rule second_fastqc:
 
 # === ===  Index & Mapping: bowtie2   === === ===
 
-rule download_bowtie_image:
-  output:
-    "bowtie/bowtie.sif"
-  shell:
-    "wget -O {output} '{BOWTIE_IMAGE_URL}'"
 
 rule download_genome_fasta:
   output:
@@ -108,13 +99,13 @@ rule download_genome_fasta:
 rule indexing:
   input:
     fasta = "results/mapping/full-genome.fasta",
-    bowtie_image = "bowtie/bowtie.sif"
   output:
     "results/mapping/genome_index.tar"
-  singularity:
-    "{inputs.bowtie_image}"
+  container:
+    BOWTIE_IMAGE_URL
   shell:
     """
+    rm -f .genome_index*
     bowtie2-build {input.fasta} .genome_index
     tar -cf {output} .genome_index* --remove-files
     """
@@ -123,11 +114,10 @@ rule mapping:
   input:
     reads = "results/trimm/{sample}_trimmed.fastq.gz",
     index = "results/mapping/genome_index.tar",
-    bowtie_image = "bowtie/bowtie.sif"
   output:
     "results/mapping/{sample}_aligned.sam"
-  singularity:
-    "{input.bowtie_image}"
+  container:
+    BOWTIE_IMAGE_URL
   shell:
     """
     base_index=$(basename {input.index} .tar)
@@ -173,7 +163,7 @@ rule featurecounts:
   output:
     "results/counts/{sample}.txt"
   container:
-    "featureCounts/featureCounts.img"
+    FEATURES_COUNTS_IMAGE_URL
   shell:
     """       
     /usr/local/bin/subread-1.4.6-p3-Linux-x86_64/bin/featureCounts -p -t gene -g ID -T 16 -s 1\
