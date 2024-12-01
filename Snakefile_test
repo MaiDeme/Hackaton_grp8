@@ -12,7 +12,7 @@ samples = [
 # Règle principale
 rule all:
     input:
-         "results/counts/Combined_table.txt"
+         "results/DESeq2/DESeq2_results.txt"
 
 
 # Règle pour formater et trier les fichiers individuels
@@ -70,4 +70,19 @@ rule join_tables:
             rm results/counts/Count_table_$sample.txt
         done
         """
+
+rule DESeq2:
+  input:
+    "results/counts/Combined_table.txt"
+  output:
+    "results/DESeq2/DESeq2_results.txt"
+  container:
+    "docker://maidem/deseq2:latest"
+  shell:
+    """
+    #mkdir results/DESeq2/
+    #touch results/DESeq2/DESeq2_results.txt
+    #On passe en paremetre le repertoire de travail courant
+    Rscript DESeq2.R "$(pwd)"
+    """
 
