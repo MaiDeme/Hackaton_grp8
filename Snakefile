@@ -61,11 +61,13 @@ rule trim:
     "results/data/{sample}.fastq.gz"
   output:
     "results/trimm/{sample}_trimmed.fastq.gz"
+  log:
+    "results/trimm/{sample}_trimmed.log"
   container:
     "docker://maximeparizot/cutadapt-image:1.11"
   shell:
     """
-    cutadapt -a AGATCGGAAGAGC -m 25 -o {output} {input}
+    cutadapt -a AGATCGGAAGAGC -m 25 -o {output} {input} > {log}
     """
 # === === === === === === === === === === === ===
 
