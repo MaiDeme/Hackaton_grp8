@@ -108,7 +108,7 @@ rule indexing:
   shell:
     """
     rm -f .genome_index*
-    bowtie2-build {input.fasta} .genome_index
+    bowtie-build {input.fasta} .genome_index
     tar -cf {output} .genome_index* --remove-files
     """
 
