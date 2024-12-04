@@ -240,8 +240,7 @@ rule DESeq2:
     "results/DESeq2/DESeq2_results.txt"
   container:
     "docker://maidem/deseq2:latest"
-  shell:
-    """
-    Rscript DESeq2.R 
-    """
+  script:
+    "DESeq2.R"
+
 # === === === === === === === === === === === ===
