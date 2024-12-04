@@ -112,9 +112,19 @@ rule indexing:
     tar -cf {output} .genome_index* --remove-files
     """
 
+rule decompress_fastq:
+  input:
+    "results/trimm/{sample}_trimmed.fastq.gz"
+  output:
+    "results/trimm/{sample}_trimmed.fastq"
+  shell:
+    """
+    gunzip -c {input} > {output}
+    """
+
 rule mapping:
   input:
-    reads = "results/trimm/{sample}_trimmed.fastq.gz",
+    reads = "results/trimm/{sample}_trimmed.fastq",
     index = "results/mapping/genome_index.tar",
     bowtie_image = "bowtie/bowtie.sif"
   output:
@@ -125,7 +135,7 @@ rule mapping:
     """
     base_index=$(basename {input.index} .tar)
     tar -xf {input.index} -C results/mapping 
-    bowtie -x results/mapping/.$base_index -U {input.reads} -S {output}
+    bowtie -q -S -x results/mapping/.$base_index {input.reads} > {output}
     """
 # === === === === === === === === === === === ===
 
