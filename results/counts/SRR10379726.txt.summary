@@ -1,9 +1,9 @@
 Status	results/mapping/SRR10379726_aligned.bam
-Assigned	6452632
-Unassigned_Ambiguity	249498
+Assigned	6424639
+Unassigned_Ambiguity	247706
 Unassigned_MultiMapping	0
-Unassigned_NoFeatures	3078530
-Unassigned_Unmapped	17241032
+Unassigned_NoFeatures	3069384
+Unassigned_Unmapped	17279963
 Unassigned_MappingQuality	0
 Unassigned_FragmentLength	0
 Unassigned_Chimera	0
