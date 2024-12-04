@@ -112,19 +112,9 @@ rule indexing:
     tar -cf {output} .genome_index* --remove-files
     """
 
-rule decompress_fastq:
-  input:
-    "results/trimm/{sample}_trimmed.fastq.gz"
-  output:
-    "results/trimm/{sample}_trimmed.fastq"
-  shell:
-    """
-    gunzip -c {input} > {output}
-    """
-
 rule mapping:
   input:
-    reads = "results/trimm/{sample}_trimmed.fastq",
+    reads = "results/trimm/{sample}_trimmed.fastq.gz",
     index = "results/mapping/genome_index.tar",
   output:
     "results/mapping/{sample}_aligned.sam"
