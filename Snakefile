@@ -9,7 +9,7 @@ samples = [
 
 FASTA_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=CP000253.1&rettype=fasta&retmode=text"
 GFF_URL = "https://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?db=nuccore&report=gff3&id=CP000253.1"
-BOWTIE_IMAGE_URL = "https://zenodo.org/records/14186800/files/bowtie.sif?download=1"
+BOWTIE_IMAGE_URL = "https://zenodo.org/records/14204426/files/bowtie.sif?download=1"
 FEATURES_COUNTS_IMAGE_URL = "https://zenodo.org/records/14229723/files/featureCounts.sif?download=1"
 
 rule all:  # by convention this is the expected final output 
@@ -126,7 +126,6 @@ rule mapping:
   input:
     reads = "results/trimm/{sample}_trimmed.fastq",
     index = "results/mapping/genome_index.tar",
-    bowtie_image = "bowtie/bowtie.sif"
   output:
     "results/mapping/{sample}_aligned.sam"
   container:
