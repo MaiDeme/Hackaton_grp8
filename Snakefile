@@ -135,7 +135,7 @@ rule mapping:
     """
     base_index=$(basename {input.index} .tar)
     tar -xf {input.index} -C results/mapping 
-    bowtie -q -S -x results/mapping/.$base_index {input.reads} > {output}
+    bowtie -q -S results/mapping/.$base_index {input.reads} > {output}
     """
 # === === === === === === === === === === === ===
 
