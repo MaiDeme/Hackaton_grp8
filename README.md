@@ -1,6 +1,8 @@
 ## ReproHackathon 2024
 
-This is a repository for the project of the course "ReproHackathon". The goal of this project is to create a reproducible workflow for the analysis of RNA-seq data. The workflow will be implemented using the Snakemake workflow management system. The workflow include the following steps:
+This is a repository for the project of the course "ReproHackathon" (Project report : https://docs.google.com/document/d/1_xx_bITZrKBWvEZ71qsTfWxVgI6EPCRxSXAjsIBsN-g/edit?usp=sharing). 
+
+The goal of this project is to create a reproducible workflow for the analysis of RNA-seq data. The workflow will be implemented using the Snakemake workflow management system. The workflow include the following steps:
 
 1. Retrieving the raw data using fasterq-dump from sratoolkit 3.1.1
 2. Quality control using FastQC 0.12.1

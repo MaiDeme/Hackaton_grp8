@@ -1,9 +1,9 @@
-Status	results/mapping/SRR10379725_aligned.sam
-Assigned	26314631
-Unassigned_Ambiguity	819335
+Status	results/mapping/SRR10379725_aligned.bam
+Assigned	26174757
+Unassigned_Ambiguity	812439
 Unassigned_MultiMapping	0
-Unassigned_NoFeatures	8734132
-Unassigned_Unmapped	10371567
+Unassigned_NoFeatures	8688163
+Unassigned_Unmapped	10564306
 Unassigned_MappingQuality	0
 Unassigned_FragmentLength	0
 Unassigned_Chimera	0
