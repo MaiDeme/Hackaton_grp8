@@ -104,6 +104,9 @@ counts_trans = counts[Article_results$Name %in% translation_genes,]
 counts_trans$is_rna_path = Article_results$Name[Article_results$Name %in% translation_genes] %in% AA_rna_path
 
 
+#names_article = sub("SAOUHSC_", "", Article_results$Name[Article_results$Name %in% translation_genes])
+#length(which(startsWith(names_article, "T")))
+#counts_trans$is_rna_path = (startsWith(names_article, "T"))
 
 ################################################################################
 ####DESeq2 all 
