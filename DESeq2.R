@@ -315,7 +315,7 @@ dev.off()
 #### Volcano plot of translation genes
 ################################################################################
 
-pdf(Volcano_plot_all)
+pdf(Volcano_plot_trans)
 
 x = res_trans$log2FoldChange
 y = -log10(pvalues_trans)
