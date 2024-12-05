@@ -158,12 +158,13 @@ rule download_annotation:
 
 # == Counting reads expression: featureCounts ===
 
+# Règle pour Compter les reads mappes sur le genome de reference
 rule featurecounts:
   input:
     annotation="results/counts/gencode.gff",  
     bam_file="results/mapping/{sample}_aligned.bam"
   output:
-    "results/counts/{sample}.txt"
+    "results/counts/raw_{sample}.txt"
   container:
     FEATURES_COUNTS_IMAGE_URL
   shell:
@@ -174,16 +175,131 @@ rule featurecounts:
     {input.bam_file}
     """
 
+# Règle pour formater et trier les fichiers individuels
+rule format_and_sort:
+    input:
+        "results/counts/raw_{sample}.txt"
+    output:
+        "results/counts/Count_table_{sample}.txt"
+        
+    shell:
+        """
+        
+        awk '{{print $1 " " $7}}' {input} > {output}
+
+        sed -i '1,2d' {output}
+
+        echo -e "geneid {wildcards.sample}" > results/counts/temp_file{wildcards.sample}
+        cat {output} >> results/counts/temp_file{wildcards.sample}
+
+        mv results/counts/temp_file{wildcards.sample} {output}
+
+        sed -i 's/ \\+/\\t/g' {output}
+        sort -k1,1 -t $'\\t' {output} -o {output}
+        """
+
+
+# Règle pour joindre les fichiers et supprimer les fichiers temporaires
+rule join_tables:
+    input:
+        expand("results/counts/Count_table_{sample}.txt", sample=samples)
+    output:
+        "results/counts/Combined_table.txt"
+    params:
+        # Créer une chaîne d'échantillons pour la boucle
+        samples=" ".join(samples[1:])
+    shell:
+        """
+        # Copier le premier fichier vers le fichier de sortie
+        cp {input[0]} {output}
+
+        rm {input[0]}
+
+        # Boucle sur les échantillons à partir du second
+        for sample in {params.samples}; do
+            # Afficher l'échantillon pour débogage
+            echo $sample
+
+            # Joindre les fichiers avec `join`
+            join -1 1 -2 1 -t $'\\t' -a 1 -a 2 {output} results/counts/Count_table_$sample.txt > results/counts/temp_file
+
+            # Déplacer le fichier temporaire vers le fichier de sortie final
+            mv results/counts/temp_file {output}
+
+            #Supprimmer le fichier de compte temporaire
+            rm results/counts/Count_table_$sample.txt
+        done
+        """
+
+
+# Règle pour formater et trier les fichiers individuels
+rule format_and_sort:
+    input:
+        "results/counts/raw_{sample}.txt"
+    output:
+        "results/counts/Count_table_{sample}.txt"
+        
+    shell:
+        """
+        
+        awk '{{print $1 " " $7}}' {input} > {output}
+
+        sed -i '1,2d' {output}
+
+        echo -e "geneid {wildcards.sample}" > results/counts/temp_file{wildcards.sample}
+        cat {output} >> results/counts/temp_file{wildcards.sample}
+
+        mv results/counts/temp_file{wildcards.sample} {output}
+
+        sed -i 's/ \\+/\\t/g' {output}
+        sort -k1,1 -t $'\\t' {output} -o {output}
+        """
+
+
+# Règle pour joindre les fichiers et supprimer les fichiers temporaires
+rule join_tables:
+    input:
+        expand("results/counts/Count_table_{sample}.txt", sample=samples)
+    output:
+        "results/counts/Combined_table.txt"
+    params:
+        # Créer une chaîne d'échantillons pour la boucle
+        samples=" ".join(samples[1:])
+    shell:
+        """
+        # Copier le premier fichier vers le fichier de sortie
+        cp {input[0]} {output}
+
+        rm {input[0]}
+
+        # Boucle sur les échantillons à partir du second
+        for sample in {params.samples}; do
+            # Afficher l'échantillon pour débogage
+            echo $sample
+
+            # Joindre les fichiers avec `join`
+            join -1 1 -2 1 -t $'\\t' -a 1 -a 2 {output} results/counts/Count_table_$sample.txt > results/counts/temp_file
+
+            # Déplacer le fichier temporaire vers le fichier de sortie final
+            mv results/counts/temp_file {output}
+
+            #Supprimmer le fichier de compte temporaire
+            rm results/counts/Count_table_$sample.txt
+        done
+        """
+
+
 # === === === === === === === === === === === ===
 
 # === === === === DESeq2 === === === === === ===
 rule DESeq2:
+  input:
+    "results/counts/Combined_table.txt"
   output:
     "results/DESeq2/DESeq2_results.txt"
   container:
     "docker://maidem/deseq2:latest"
-  shell:
-    """
-    Rscript DESeq2.R 
-    """
+  script:
+    "DESeq2.R"
+
 # === === === === === === === === === === === ===
