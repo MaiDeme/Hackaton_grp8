@@ -4,7 +4,7 @@
 
 #Nettoyage de la session
 graphics.off()
-set.seed(12345)
+set.seed(22222222)
 
 #Chargement des librairies
 
@@ -12,8 +12,7 @@ library(DESeq2)
 library(ggplot2)
 library(EnrichmentBrowser)
 
-#Mise en place du repertoire de travail
-#args=commandArgs(trailingOnly = TRUE)
+
 dir = getwd()
 
 #dir = "/home/marmotte/Documents/Université/Master_BIBS/M2AMI2B/ReproHackathon/Hackaton_grp8"
@@ -58,12 +57,6 @@ if (!file.exists(res_txt)) {
 #Chargement des fichiers 
 counts = read.table(paste0(dir,"/results/counts/Combined_table.txt"), header = T, row.names = 1)
 
-download.file("https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE139659&format=file&file=GSE139659%5FIPvsctrl%2Ecomplete%2Exls%2Egz", 
-              paste0(dir,"/results/DESeq2/Article_results"))
-Article_results = read.csv( paste0(dir,"/results/DESeq2/Article_results"), sep = "\t")
-Article_results = Article_results[1:2967,]
-
-
 ################################################################################
 ### Recuperation des genes impliques dans la traduction
 ################################################################################
@@ -78,6 +71,7 @@ KEGG = download.kegg.pathways(org = "sao")
 Ribo_path = KEGG$sao03010
 Aminoacyl_path = KEGG$sao00970
 
+#Recuperation des noms de genes lies a la traduction
 names = names(Ribo_path@nodes)
 
 for (name in names) {
@@ -93,20 +87,16 @@ for (name in names) {
   AA_rna_path = c(AA_rna_path, gene@name)
 }
 
+#Filtre des counts en fonction des noms de genes
 
-translation_genes = sub("^sao:", "", translation_genes[grep("^sao:", translation_genes)])
-AA_rna_path  = sub("^sao:", "", AA_rna_path[grep("^sao:", AA_rna_path)])
+rownames(counts) = sub("gene-","sao:",rownames(counts))
+
+counts_trans = counts[rownames(counts) %in% translation_genes,]
+
+is_rna_path = (!startsWith(rownames(counts_trans), "sao:SAOUHSC_T")) & rownames(counts_trans) %in% AA_rna_path
+counts_trans$is_rna_path = is_rna_path
 
 
-counts_trans = counts[Article_results$Name %in% translation_genes,]
-
-
-counts_trans$is_rna_path = Article_results$Name[Article_results$Name %in% translation_genes] %in% AA_rna_path
-
-
-#names_article = sub("SAOUHSC_", "", Article_results$Name[Article_results$Name %in% translation_genes])
-#length(which(startsWith(names_article, "T")))
-#counts_trans$is_rna_path = (startsWith(names_article, "T"))
 
 ################################################################################
 ####DESeq2 all 
@@ -260,43 +250,45 @@ data_rna_path <- data.frame(
   y = res_trans$log2FoldChange[counts_trans$is_rna_path == TRUE]
 )
 
-# Filtrer ou corriger les valeurs problématiques pour data_rna_path
-data_rna_path$x <- ifelse(data_rna_path$x <= 0, 1e-6, data_rna_path$x)
 
 # Ajouter une colonne pour distinguer les groupes RNA path dans la légende
-data_rna_path$legend_group <- "tRNA Synthèse"
+data_rna_path$legend_group <- "tRNA Synthese"
 
 # Ajouter une colonne légende aux données principales
 data$legend_group <- ifelse(data$pvalue_group == "Non Significatif", 
                             "Non Significatif", 
                             "Significatif")
 
-# Fusionner les données
+# Fusionner les données : On va representer deux fois les donnees trna synthetase
 data_combined <- rbind(
   data[, c("x", "y", "legend_group")],
   data_rna_path[, c("x", "y", "legend_group")]
 )
 
+data_combined$x <- ifelse(data_combined$x <= 0, 1e-6, data_combined$x)
+
+
 # Création du plot
 ggplot(data_combined, aes(x = x, y = y, color = legend_group, shape = legend_group)) +
   geom_point(data = data, size = 2) + 
   geom_point(data = data_rna_path, size = 2, fill = NA) + 
-  scale_color_manual(
-    values = c(
-      "Non Significatif" = "darkgrey",
-      "Significatif" = "red",
-      "tRNA Synthèse" = "black"
-    ),
-    name = NULL 
-  ) +
   scale_shape_manual(
     values = c(
       "Non Significatif" = 16,   
       "Significatif" = 16,       
-      "tRNA Synthèse" = 21       
+      "tRNA Synthese" = 21       
     ),
     name = NULL 
   ) +
+  scale_color_manual(
+    values = c(
+      "Non Significatif" = "darkgrey",
+      "Significatif" = "red",
+      "tRNA Synthese" = "black"
+    ),
+    name = NULL 
+  ) +
+  
   scale_x_continuous(
     trans = "log2",
     breaks = scales::trans_breaks("log2", function(x) 2^x),
@@ -314,8 +306,7 @@ ggplot(data_combined, aes(x = x, y = y, color = legend_group, shape = legend_gro
       size = 3, 
       fill = c(NA, NA, NA) 
     ))
-  ) +
-  theme_minimal()
+  ) 
 
 
 dev.off()
@@ -326,21 +317,21 @@ dev.off()
 
 pdf(Volcano_plot_all)
 
-x = res$log2FoldChange
-y = -log10(pvalues)
+x = res_trans$log2FoldChange
+y = -log10(pvalues_trans)
 
 
 ggplot(data = as.data.frame(cbind(x,y)), 
        mapping = aes(x,
                      y, 
-                     color = ifelse(!is.na(pvalues) & pvalues > 0.05, 
+                     color = ifelse(!is.na(pvalues_trans) & pvalues_trans > 0.05, 
                                     "Non Significatif", 
                                     "Significatif")))+
   geom_point()+
   scale_color_manual(values = c("Non Significatif" = "black", "Significatif" = "red"),
                      name = NULL) +
-  xlab("Log2 fold change") +
-  ylab("Log2 Base Mean")
+  xlab("Log2 Fold change") +
+  ylab("-Log10 Pvalues")
 
 dev.off()
 

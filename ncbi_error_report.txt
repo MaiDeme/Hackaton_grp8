@@ -1,8 +1,8 @@
 <Report>
  <Run>
   <Date>
-   <Start value="Wed Dec 4 2024 8:25:55 PM"/>
-   <End value="Wed Dec 4 2024 9:15:44 PM"/>
+   <Start value="Thu Dec 5 2024 9:12:42 AM"/>
+   <End value="Thu Dec 5 2024 9:42:28 AM"/>
   </Date>
   <Home name="HOME" value="/home/marmotte/Documents/Université/Master_BIBS/M2AMI2B/ReproHackathon/Hackaton_grp8"/>
   <Cwd>/home/marmotte/Documents/Université/Master_BIBS/M2AMI2B/ReproHackathon/Hackaton_grp8</Cwd>
@@ -15,7 +15,7 @@
    <Arg index="5" value="-O"/>
    <Arg index="6" value="results/data/"/>
   </CommandLine>
-  <Result rc="RC(rcPS,rcCondition,rcWaiting,rcTimeout,rcExhausted)"/>
+  <Result rc="RC(rcExe,rcProcess,rcExecuting,rcProcess,rcCanceled)"/>
   <User admin="false"/>
  </Run>
  <Configuration>
@@ -41,7 +41,7 @@
     <HOME>"/home/marmotte/Documents/Universit\x4*\x20/Master_BIBS/M2AMI2B/ReproHackathon/Hackaton_grp8"</HOME>
     <HOST></HOST>
     <LIBS>
-      <GUID>"20ad4b9b-3dcc-40c1-82c5-167c6e234ca0"</GUID>
+      <GUID>"4d4e4851-1e36-47b2-a034-37bae6028ac2"</GUID>
     </LIBS>
     <NCBI_HOME>"/home/marmotte/Documents/Universit\x4*\x20/Master_BIBS/M2AMI2B/ReproHackathon/Hackaton_grp8/.ncbi"</NCBI_HOME>
     <NCBI_SETTINGS>"/home/marmotte/Documents/Universit\x4*\x20/Master_BIBS/M2AMI2B/ReproHackathon/Hackaton_grp8/.ncbi/user-settings.mkfg"</NCBI_SETTINGS>
