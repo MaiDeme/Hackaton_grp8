@@ -9,10 +9,6 @@
 data/
 results/
 
-# Images
-cutadapt.sif
-featureCounts.img
-bowtie.sif
 
 # Python venv
 env
