@@ -11,6 +11,8 @@ set.seed(22222222)
 library(DESeq2)
 library(ggplot2)
 library(EnrichmentBrowser)
+library(FactoMineR)
+library(factoextra, verbose = F)
 
 
 dir = getwd()
@@ -23,9 +25,11 @@ res_dir = paste0(dir,"/results/DESeq2/")
 
 MAplot_all = paste0(dir,"/results/DESeq2/MA_plot_all.pdf")
 Volcano_plot_all = paste0(dir,"/results/DESeq2/Volcano_plot_all.pdf")
+PCA_all = paste0(dir,"/results/DESeq2/PCA_all.pdf")
 
 MAplot_trans = paste0(dir,"/results/DESeq2/MA_plot_trans.pdf")
 Volcano_plot_trans = paste0(dir,"/results/DESeq2/Volcano_plot_trans.pdf")
+PCA_trans = paste0(dir,"/results/DESeq2/PCA_trans.pdf")
 
 res_txt = paste0(dir,"/results/DESeq2/DESeq2_results.txt")
 
@@ -40,6 +44,9 @@ if (!file.exists(MAplot_all)) {
 if (!file.exists(Volcano_plot_all)) {
   file.create(Volcano_plot_all)
 }
+if(!file.exists(PCA_all)){
+  file.create(PCA_all)
+}
 
 
 if (!file.exists(MAplot_trans)) {
@@ -47,6 +54,9 @@ if (!file.exists(MAplot_trans)) {
 }
 if (!file.exists(Volcano_plot_trans)) {
   file.create(Volcano_plot_trans)
+}
+if(!file.exists(PCA_trans)){
+  file.create(PCA_trans)
 }
 
 
@@ -204,6 +214,18 @@ ggplot(data = as.data.frame(cbind(x,y)),
 dev.off()
 
 ################################################################################
+#### PCA of all genes
+################################################################################
+
+pdf(PCA_all)
+
+cond_color = c(rep("Antibiotique",3), rep("Controle",3))
+PCA_all = PCA(t(counts), graph = F, scale.unit = T)
+fviz_pca_ind(PCA, col.ind = cond_color)
+
+dev.off()
+
+################################################################################
 ####DESeq2 translation genes
 ################################################################################
 
@@ -337,6 +359,19 @@ dev.off()
 
 
 
+################################################################################
+#### PCA of all genes
+################################################################################
+
+pdf(PCA_trans)
+
+cond_color = c(rep("Antibiotique",3), rep("Controle",3))
+PCA_trans = PCA(t(counts_trans[,1:6]), graph = F, scale.unit = T)
+fviz_pca_ind(PCA_trans, col.ind=cond_color)
+
+head(t(counts_trans[1:6,]))
+
+dev.off()
 ################################################################################
 #### Export outputs
 ################################################################################
