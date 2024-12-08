@@ -47,5 +47,5 @@ ENV PATH="/opt/R/3.4.1/bin:${PATH}"
 RUN wget https://bioconductor.org/packages/3.5/bioc/src/contrib/BiocInstaller_1.26.1.tar.gz \
     && R CMD INSTALL BiocInstaller_1.26.1.tar.gz \
     && Rscript -e 'install.packages("https://cran.r-project.org/src/contrib/Archive/XML/XML_3.98-1.1.tar.gz",repos=NULL)' \
-    && Rscript -e 'library(BiocInstaller);options(repos = c(CRAN = "https://packagemanager.posit.co/cran/2017-10-10"));biocLite(c("DESeq2","EnrichmentBrowser"), ask=FALSE, suppressUpdates=TRUE, suppressAutoUpdate=TRUE, dependencies=TRUE, type="source")'
+    && Rscript -e 'library(BiocInstaller);options(repos = c(CRAN = "https://packagemanager.posit.co/cran/2017-10-10"));biocLite(c("DESeq2","EnrichmentBrowser","FactoMineR","factoextra"), ask=FALSE, suppressUpdates=TRUE, suppressAutoUpdate=TRUE, dependencies=TRUE, type="source")'
 CMD [ "R" ]
