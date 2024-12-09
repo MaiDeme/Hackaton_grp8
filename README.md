@@ -11,6 +11,8 @@ The goal of this project is to create a reproducible workflow for the analysis o
 5. Counting using featureCounts from subread 1.4.6-p3
 6. Differential analysis with DESeq2 1.16.1 on R 3.4.1
 
+Docker (v 27.3.1) is needed as well as Apptainer (v 1.3.4) and Snakemake (7.32.4) to run the pipeline.
+
 In the `main` branch, you will find the final version of the workflow.
 In the `results` branch, you will find, graphs plots and additional files.
 Use the following command to run the workflow:
