@@ -1,0 +1,89 @@
+This is cutadapt 1.11 with Python 3.6.15
+Command line parameters: -a AGATCGGAAGAGC -m 25 -o results/trimm/SRR10379726_trimmed.fastq.gz results/data/SRR10379726.fastq.gz
+Trimming 1 adapter with at most 10.0% errors in single-end mode ...
+Finished in 1448.03 s (54 us/read; 1.12 M reads/minute).
+
+=== Summary ===
+
+Total reads processed:              27,021,746
+Reads with adapters:                   293,848 (1.1%)
+Reads that were too short:                  54 (0.0%)
+Reads written (passing filters):    27,021,692 (100.0%)
+
+Total basepairs processed: 1,756,413,490 bp
+Total written (filtered):  1,755,272,762 bp (99.9%)
+
+=== Adapter 1 ===
+
+Sequence: AGATCGGAAGAGC; Type: regular 3'; Length: 13; Trimmed: 293848 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-13 bp: 1
+
+Bases preceding removed adapters:
+  A: 50.0%
+  C: 20.5%
+  G: 10.7%
+  T: 18.8%
+  none/other: 0.0%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+3	100710	422214.8	0	100710
+4	142510	105553.7	0	142510
+5	46860	26388.4	0	46860
+6	1402	6597.1	0	1402
+7	141	1649.3	0	141
+8	7	412.3	0	7
+9	1628	103.1	0	29 1599
+10	295	25.8	1	2 293
+11	140	6.4	1	2 138
+12	14	1.6	1	0 14
+13	10	0.4	1	2 8
+14	3	0.4	1	0 3
+15	14	0.4	1	3 11
+16	5	0.4	1	0 5
+17	6	0.4	1	0 6
+18	4	0.4	1	0 4
+19	1	0.4	1	0 1
+21	2	0.4	1	0 2
+22	2	0.4	1	2
+23	1	0.4	1	0 1
+24	8	0.4	1	0 8
+25	1	0.4	1	0 1
+26	3	0.4	1	0 3
+27	1	0.4	1	0 1
+28	1	0.4	1	0 1
+30	4	0.4	1	0 4
+31	1	0.4	1	0 1
+33	4	0.4	1	0 4
+34	3	0.4	1	0 3
+35	3	0.4	1	0 3
+36	1	0.4	1	0 1
+37	1	0.4	1	0 1
+38	6	0.4	1	0 6
+39	2	0.4	1	0 2
+41	1	0.4	1	0 1
+42	2	0.4	1	0 2
+43	2	0.4	1	0 2
+45	1	0.4	1	0 1
+46	2	0.4	1	0 2
+47	3	0.4	1	0 3
+48	2	0.4	1	0 2
+49	3	0.4	1	0 3
+50	2	0.4	1	0 2
+51	2	0.4	1	0 2
+52	4	0.4	1	0 4
+53	1	0.4	1	0 1
+55	3	0.4	1	0 3
+56	2	0.4	1	0 2
+57	6	0.4	1	0 6
+58	3	0.4	1	0 3
+59	1	0.4	1	0 1
+60	3	0.4	1	0 3
+61	4	0.4	1	0 4
+62	2	0.4	1	0 2
+63	3	0.4	1	0 3
+64	1	0.4	1	0 1
+65	1	0.4	1	0 1
+
