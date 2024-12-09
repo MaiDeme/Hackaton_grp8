@@ -1,0 +1,15 @@
+R version :  R version 3.4.1 (2017-06-30) 
+ DefSeq version :  1.16.1 
+ EnrichmentBrowser version :  2.6.3 
+
+ Resultats Analyse differentielle tous les genes :
+                 
+ genes diff :  1483 
+ genes up :  710 
+ genes down :  773 
+
+ Resultats Analyse differentielle des genes de traduction :
+                 
+ genes diff :  33 
+ genes up :  7 
+ genes down :  26
