@@ -7,8 +7,9 @@ The goal of this project is to create a reproducible workflow for the analysis o
 1. Retrieving the raw data using fasterq-dump from sratoolkit 3.1.1
 2. Quality control using FastQC 0.12.1
 3. Trimming using cutadapt 1.11
-4. Mapping using Bowtie 
+4. Mapping using Bowtie 2.5.4
 5. Counting using featureCounts from subread 1.4.6-p3
+6. Differential analysis with DESeq2 1.16.1 on R 3.4.1
 
 In the `main` branch, you will find the final version of the workflow.
 In the `results` branch, you will find, graphs plots and additional files.
