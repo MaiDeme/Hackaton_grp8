@@ -221,7 +221,7 @@ pdf(PCA_all)
 
 cond_color = c(rep("Antibiotique",3), rep("Controle",3))
 PCA_all = PCA(t(counts), graph = F, scale.unit = T)
-fviz_pca_ind(PCA, col.ind = cond_color)
+fviz_pca_ind(PCA_all, col.ind = cond_color)
 
 dev.off()
 
