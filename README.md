@@ -11,6 +11,7 @@ The goal of this project is to create a reproducible workflow for the analysis o
 5. Counting using featureCounts from subread 1.4.6-p3
 
 In the `main` branch, you will find the final version of the workflow.
+In the `results` branch, you will find, graphs plots and additional files.
 Use the following command to run the workflow:
 
 ```
