@@ -16,7 +16,7 @@ rule all:  # by convention this is the expected final output
   input:
     expand("results/fastqc/{sample}_fastqc.html", sample=samples),
     expand("results/2fastqc/{sample}_trimmed_fastqc.html", sample=samples),
-    expand("results/counts/{sample}.txt", sample=samples),
+    expand("results/counts/Combined_table.txt", sample=samples),
     "results/DESeq2/DESeq2_results.txt"
 
 # === === === === Downloading data  === === ===
