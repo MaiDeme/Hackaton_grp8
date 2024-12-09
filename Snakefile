@@ -126,6 +126,12 @@ rule mapping:
     tar -xf {input.index} -C results/mapping 
     bowtie -q -S results/mapping/.$base_index {input.reads} > {output}
     """
+
+# To use bowtie2, you can use this commands instead of the bowtie1 commands in the two rules above
+# bowtie2-build {input.fasta} .genome_index
+# bowtie2 -x results/mapping/.$base_index -U {input.reads} -S {output}
+# use this container: https://zenodo.org/records/14186800/files/bowtie.sif?download=1
+
 # === === === === === === === === === === === ===
 
 # === ===  Compression of .sam into .bam === === ===
